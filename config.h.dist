@@ -1,0 +1,6 @@
+#define SSID_NAME "WifiSSIDhere"
+#define SSID_PASSWORD "WifiPassword"
+#define MQTT_SERVER "IPAdress"
+#define MQTT_CLIENT_ID "UniqueId"
+#define MQTT_SUBSCRIBE_TOPIC "pepper/update"
+#define MQTT_SUBSCRIBE_TOPIC_BRIGHTNESS "pepper/update/brightness"
