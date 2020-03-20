@@ -9,6 +9,10 @@
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
 
+// TODO only include if AWTRIX is enabled
+// used to parse JSON from AWTRIX example
+#include <ArduinoJson.h>
+
 // debug mode enables speedup of 300x (5 minutes are passing per second)
 // also additional output is shown in the serial console
 #define DEBUG       false
@@ -117,6 +121,48 @@ void onConnectionEstablished() {
     timeClient.setTimeOffset(offset);
     CalculateEnabledLEDsForTime();
   });
+
+  // TODO only include if AWTRIX is enabled
+  client.subscribe(MQTT_AWTRIX_PREFIX "/response", [] (const String & payload) {
+     StaticJsonDocument<250> doc;
+     DeserializationError error = deserializeJson(doc, payload.c_str());
+     if (error) {
+      Serial.print(F("deserializeJson() failed: "));
+      Serial.println(error.c_str());
+      return;
+    }
+
+    int lux = (int)doc["LUX"];
+    Serial.print("lux: ");
+    Serial.println(lux);
+
+    if (lux >= BRIGHTNESS_MAX_LUX) {
+      Serial.println("set maximum brightness");
+      FastLED.setBrightness(BRIGHTNESS_MAX_VALUE);
+    } else if (lux <= BRIGHTNESS_MIN_LUX) {
+      Serial.println("set minimum brightness");
+      FastLED.setBrightness(BRIGHTNESS_MIN_VALUE);
+    } else {
+      Serial.println("calculate brightness");
+      int brightnessSteps = BRIGHTNESS_MAX_VALUE - BRIGHTNESS_MIN_VALUE;
+      Serial.print("brightness steps: ");
+      Serial.println(brightnessSteps);
+      float luxPerBrightnessStep = (BRIGHTNESS_MAX_LUX - BRIGHTNESS_MIN_LUX + .0) / brightnessSteps;
+      Serial.print("lux per brightness step: ");
+      Serial.println(luxPerBrightnessStep);
+
+      // level lux to minimum value
+      lux = lux - BRIGHTNESS_MIN_LUX;
+      Serial.print("leveled lux: ");
+      Serial.println(lux);
+      float steps = lux / luxPerBrightnessStep;
+      Serial.print("steps: ");
+      Serial.println(steps);
+
+      Serial.print("calculated brightness: ");
+      Serial.println(BRIGHTNESS_MIN_VALUE + steps);
+    }
+  });
 }
 
 
@@ -199,6 +245,10 @@ void TimeUpdateLoop()
       if (minutes % 5 == 2) {
         CalculateEnabledLEDsForTime();
       }
+
+      // only do this once a minute to trigger the update of the brightness
+      // TODO only include if AWTRIX is enabled
+      client.publish(MQTT_AWTRIX_PREFIX "/basics", "{\"get\":\"matrixInfo\"}");
     }
 
     /*

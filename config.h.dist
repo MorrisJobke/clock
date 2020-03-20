@@ -2,5 +2,22 @@
 #define SSID_PASSWORD "WifiPassword"
 #define MQTT_SERVER "IPAdress"
 #define MQTT_CLIENT_ID "UniqueId"
-#define MQTT_SUBSCRIBE_TOPIC "pepper/update"
-#define MQTT_SUBSCRIBE_TOPIC_BRIGHTNESS "pepper/update/brightness"
+
+#define MQTT_SUBSCRIBE_COLOR_PPM_TOPIC "clock/color/ppm"
+#define MQTT_SUBSCRIBE_COLOR_RAINBOW_TOPIC "clock/color/rainbow"
+#define MQTT_SUBSCRIBE_VIEW_FULL_TOPIC "clock/view/full"
+#define MQTT_SUBSCRIBE_VIEW_TIME_TOPIC "clock/view/time"
+#define MQTT_SUBSCRIBE_BRIGHTNESS_TOPIC "clock/brightness"
+#define MQTT_SUBSCRIBE_OFFSET_TOPIC "clock/offset"
+
+// the following setting are here to automatically adjust the brightness
+// of the LEDs. It queries the MQTT of AWTRIX. This needs to have
+// a lux sensor build in. Then it takes this lux value and translates it
+// linearly to a brightness value
+// A mininum and maximum lux value can be specified which then maps to a
+// minimum and maximum brightness value (can range from 0 to 255).
+#define MQTT_AWTRIX_PREFIX "awtrix"
+#define BRIGHTNESS_MIN_LUX 0
+#define BRIGHTNESS_MAX_LUX 50
+#define BRIGHTNESS_MIN_VALUE 64
+#define BRIGHTNESS_MAX_VALUE 255
