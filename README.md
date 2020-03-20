@@ -1,5 +1,9 @@
 # Word clock
 
+## Hardware
+
+It's described in the [blog post](https://morrisjobke.de/2020/03/19/word-clock-hardware/) by me.
+
 ## Features
 
 * show the time in rainbow color schema
