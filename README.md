@@ -14,21 +14,34 @@ It's described in the [blog post](https://morrisjobke.de/2020/03/19/word-clock-h
 
 ## Requirements
 
+* add the NodeMCU board to Arduino
+  * open "Settings" and add `http://arduino.esp8266.com/stable/package_esp8266com_index.json` as "Additional boards manager URL"
+  * open "Board Manager" via "Tools" > "Boards"
+  * search for "NodeMCU" and install esp8266 package
+  * select board "Tools" > "Boards" > "NodeMCU 1.0"
+  * optional: raise the transfer speed to not wait too long during upload (921.600 worked fine for me)
 * install following dependencies via the Arduino IDE:
   * EspMQTTClient (https://github.com/plapointe6/EspMQTTClient)
   * NTPClient (https://github.com/arduino-libraries/NTPClient)
   * ArduinoJSON (https://arduinojson.org/)
   * PubSubClient (https://pubsubclient.knolleary.net)
+  * FastLED (http://fastled.io)
 * copy `config.h.dist` to `config.h` and adjust the config options
-* adjust the `MQTT_MAX_PACKET_SIZE` option in the `PubSubClient` library to 250 to allow proper AWTRIX support
+* adjust the `MQTT_MAX_PACKET_SIZE` option in the `PubSubClient` library to 250 to allow proper AWTRIX lux sensor support 
+
+> From PubSubClient: "The maximum message size, including header, is 128 bytes by default. This is configurable via MQTT_MAX_PACKET_SIZE in PubSubClient.h"
+
+* following FastLED issue via https://github.com/FastLED/FastLED/issues/733#issuecomment-491634606:
+
+```
+error: 'boolean' has a previous declaration as 'typedef bool boolean'
+ typedef bool boolean;
+              ^
+```
 
 ## Known limitations
 
 * DST is not yet respected (plan is to announce this via MQTT)
-* max MQTT packet size needs to be raised for the feature to fetch the lux value from an AWTRIX:
-
-> From PubSubClient: "The maximum message size, including header, is 128 bytes by default. This is configurable via MQTT_MAX_PACKET_SIZE in PubSubClient.h"
-
 * the AWTRIX part is not yet optional. One can remove the code segments that start with `// TODO only include if AWTRIX is enabled`
 
 ## API

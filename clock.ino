@@ -103,7 +103,6 @@ void onConnectionEstablished() {
     showTime = true;
   });
 
-  // TODO set brightness automatically - photo sensor?
   client.subscribe(MQTT_SUBSCRIBE_BRIGHTNESS_TOPIC, [] (const String & payload)  {
     int brightness = atoi(payload.c_str());
     Serial.print("brightness: ");
